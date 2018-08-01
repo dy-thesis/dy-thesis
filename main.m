@@ -1,4 +1,7 @@
-job2 = batch('UR5_CLIENT','Pool',1);
-job1 = batch('acquisition','Pool',1);
-wait (job2);
-load(job2,'TAB');
+p = gcp(); % get the current parallel pool 
+
+get_tcp_coordinates = parfeval(p, @ur5_client, 1, '192.168.56.102', 30003); 
+get_tcp_coordinates_clone = parfeval(p, @ur5_client, 1, '192.168.56.101', 30003); 
+
+tcp_coordinates = fetchOutputs(get_tcp_coordinates); % Blocks until complete
+tcp_coordinates_clone = fetchOutputs(get_tcp_coordinates_clone); % Blocks until complete
