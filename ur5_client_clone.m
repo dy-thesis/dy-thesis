@@ -14,7 +14,7 @@ while(exist('lock.txt', 'file') == 2)
     raw_data = [raw_data; timestamp, sample];
 end
 
-T = table();
+TCP_coordinates_clone = table();
 sz = size(raw_data);
 rows = sz(1);
 for row = 1:rows
@@ -60,8 +60,8 @@ for row = 1:rows
     digital_out = 0;
   end
   
-  T = [T; table(timestamp, digital_out, x, y, z, rx, ry, rz)];
+  TCP_coordinates_clone = [TCP_coordinates_clone; table(timestamp, digital_out, x, y, z, rx, ry, rz)];
 end
 
-writetable(T,'robotDataX.csv','Delimiter',',');
+writetable(TCP_coordinates_clone,'TCP_coordinates_clone.csv','Delimiter',',');
 

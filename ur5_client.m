@@ -1,6 +1,6 @@
 clear all;
 
-HOST = '192.168.56.102';
+HOST = '192.168.56.101';
 PORT = 30003;
 
 s = tcpclient(HOST, PORT);
@@ -14,7 +14,7 @@ while(exist('lock.txt', 'file') == 2)
     raw_data = [raw_data; timestamp, sample];
 end
 
-T = table();
+TCP_coordinates = table();
 sz = size(raw_data);
 rows = sz(1);
 for row = 1:rows
@@ -60,8 +60,8 @@ for row = 1:rows
     digital_out = 0;
   end
   
-  T = [T; table(timestamp, digital_out, x, y, z, rx, ry, rz)];
+  TCP_coordinates = [TCP_coordinates; table(timestamp, digital_out, x, y, z, rx, ry, rz)];
 end
 
-writetable(T,'robotDataX.csv','Delimiter',',');
+writetable(TCP_coordinates,'TCP_coordinates.csv','Delimiter',',');
 
