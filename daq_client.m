@@ -87,7 +87,7 @@ function forces = daq_client()
   %   received_samples = received_samples + Fx.size;      % All samples received since the beginning of the code
       forces = table(timestamps',Fx',Fy',Fz');  
 
-      writetable(,'forces.csv','Delimiter',',');
+      writetable(forces,'forces.csv');
 
       daq.close();                    % Close the already opened DAQ 
     else
