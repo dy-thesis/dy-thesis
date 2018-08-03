@@ -1,5 +1,5 @@
-function forces = daq_client()
 
+function forces = daq_client()
   % If the MATLAB is 32bit
   if strcmp(computer('arch'),'win32'),
     addpath '.\mex_files\32bit'; 
@@ -9,7 +9,6 @@ function forces = daq_client()
   if strcmp(computer('arch'),'win64'),
     addpath '.\mex_files\64bit'; 
   end
-
   ports = OptoPorts(3);                   % For 3 axis sensors - Get an instance of the OptoPorts class (3 - only 3D sensors; 6 - only 6D sensors ) 
 
   % version = ports.getAPIversion;        % Get the API version (Major,Minor,Revision,Build)
@@ -34,14 +33,15 @@ function forces = daq_client()
       daq.sendConfig(speed,filter);   % Sends the required configuration
       
       channel = 1;                    % Some DAQ support multi-channel, othwerwise it must be 1
-          
-  %   elapsed_time = 0; 
-      received_samples = 0; 
-      n = 0; 
+      
+      %   elapsed_time = 0; 
+%       received_samples = 0; 
+%       n = 0; 
+      
       Fx = [];
       Fy = []; 
       Fz = []; 
-      forces = table();
+      forces_1 = [];
       
       output = daq.read3D(channel);   % For 3 axis sensors - Reads all the available samples (output.size) to empty the buffer
 
@@ -56,13 +56,17 @@ function forces = daq_client()
           case -3
             disp('The selected DAQ channel does not exist...');
         end
-                     
+        
+                  
        % For 3 axis sensors - Display the most current Fx,Fy,Fz sensor values (all are in Counts, refer to the sensitivity report to convert it to N.)  
               
         Fx = [Fx, output.Fx()];            % Fx stores all the received samples of output.Fx
         Fy = [Fy, output.Fy()];            % Fy stores all the received samples of output.Fy
         Fz = [Fz, output.Fz()];            % Fz stores all the received samples of output.Fz
     
+%       forces_1 = [Fx' Fy' Fz'];
+%       idleForces = calibration();
+%       Forces = (forces_1- idleForces);
       end % close the while loop
 
       elapsed_time = (now - start);
@@ -85,9 +89,14 @@ function forces = daq_client()
       end
      
   %   received_samples = received_samples + Fx.size;      % All samples received since the beginning of the code
-      forces = table(timestamps',Fx',Fy',Fz');  
-
-      writetable(forces,'forces.csv');
+%       idleForces = calibration();
+%       Forces = (forces_1- idleForces);
+%       Row = table(timestamps,Forces);
+%   
+%       writetable(Row,'force2data.csv','Delimiter',',')
+% 
+forces = table(Fx',Fy',Fz');  
+writetable(forces,'forces.csv');
 
       daq.close();                    % Close the already opened DAQ 
     else
@@ -97,4 +106,6 @@ function forces = daq_client()
 
   clear daq;                              % Destroy the OptoDAQ class
   clear ports;                            % Destroy the OptoPorts class
+% forces = forces_1;
 end % Close function
+
